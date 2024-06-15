@@ -10,7 +10,7 @@ app.disable('x-powered-by');
 
 // Add middleware
 app.use(cors({
-  origin: "http://localhost:3000"
+  origin: "*"
 }));
 
 const PORT = 3001;
@@ -26,6 +26,13 @@ let currentVideoIndex = 0;
 
 // Helper function to get video path
 const getVideoPath = (index) => path.join(videoDirectory, videos[index]);
+
+app.get('/', (req, res) => {
+  <div>
+    HELLO WORLD
+  </div>
+})
+
 
 app.get('/video', (req, res) => {
   const videoPath = getVideoPath(currentVideoIndex);

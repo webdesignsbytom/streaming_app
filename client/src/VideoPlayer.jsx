@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 
+const add = "https://streaming-app-three.vercel.app"
+
 function VideoPlayer() {
     const videoRef = useRef(null);
 
     const fetchVideo = async () => {
-        const response = await axios.get('http://localhost:3001/video', {
+        const response = await axios.get(`${add}/video`, {
             responseType: 'blob',
         });
         const videoUrl = URL.createObjectURL(response.data);
@@ -17,12 +19,12 @@ function VideoPlayer() {
     }, []);
 
     const requestNextVideo = async () => {
-        await axios.get('http://localhost:3001/next');
+        await axios.get(`${add}/next`);
         fetchVideo();
     };
 
     const requestPreviousVideo = async () => {
-        await axios.get('http://localhost:3001/previous');
+        await axios.get(`${add}/previous`);
         fetchVideo();
     };
 
