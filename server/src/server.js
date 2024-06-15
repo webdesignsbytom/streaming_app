@@ -10,10 +10,10 @@ app.disable('x-powered-by');
 
 // Add middleware
 app.use(cors({
-  origin: "*"
+  origin: process.env.FRONTEND_URL || "*"
 }));
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT || 3001;
 
 // Get the directory name
 const __filename = url.fileURLToPath(import.meta.url);
@@ -28,11 +28,13 @@ let currentVideoIndex = 0;
 const getVideoPath = (index) => path.join(videoDirectory, videos[index]);
 
 app.get('/', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
   res.send('Welcome to the Video Streaming Server. Use /video to stream a video.');
 });
 
-
 app.get('/video', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+  
   const videoPath = getVideoPath(currentVideoIndex);
   if (!fs.existsSync(videoPath)) {
     return res.status(404).send('Video not found');
@@ -69,6 +71,8 @@ app.get('/video', (req, res) => {
 });
 
 app.get('/next', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+
   if (currentVideoIndex < videos.length - 1) {
     currentVideoIndex++;
   } else {
@@ -78,6 +82,8 @@ app.get('/next', (req, res) => {
 });
 
 app.get('/previous', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+
   if (currentVideoIndex > 0) {
     currentVideoIndex--;
   } else {
@@ -88,4 +94,5 @@ app.get('/previous', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  console.log('process.env.FRONTEND_URL', process.env.FRONTEND_URL);
 });
