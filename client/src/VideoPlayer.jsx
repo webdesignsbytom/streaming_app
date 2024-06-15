@@ -8,7 +8,7 @@ function VideoPlayer() {
   const fetchVideo = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/video`,
+        `https://streaming-app-sigma-five.vercel.app/video`,
         {
           responseType: 'blob',
         }
@@ -26,7 +26,7 @@ function VideoPlayer() {
 
   const requestNextVideo = async () => {
     try {
-      await axios.get(`${process.env.REACT_APP_API_URL}/next`);
+      await axios.get(`https://streaming-app-sigma-five.vercel.app/next`);
       fetchVideo();
     } catch (error) {
       console.error('Error requesting next video:', error);
@@ -35,7 +35,7 @@ function VideoPlayer() {
 
   const requestPreviousVideo = async () => {
     try {
-      await axios.get(`${process.env.REACT_APP_API_URL}/previous`);
+      await axios.get(`https://streaming-app-sigma-five.vercel.app/previous`);
       fetchVideo();
     } catch (error) {
       console.error('Error requesting previous video:', error);

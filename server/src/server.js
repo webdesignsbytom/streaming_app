@@ -10,7 +10,7 @@ app.disable('x-powered-by');
 
 // Add middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*"
+  origin: "*"
 }));
 
 const PORT = process.env.PORT || 3001;
@@ -28,12 +28,12 @@ let currentVideoIndex = 0;
 const getVideoPath = (index) => path.join(videoDirectory, videos[index]);
 
 app.get('/', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.send('Welcome to the Video Streaming Server. Use /video to stream a video.');
 });
 
 app.get('/video', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   
   const videoPath = getVideoPath(currentVideoIndex);
   if (!fs.existsSync(videoPath)) {
@@ -71,7 +71,7 @@ app.get('/video', (req, res) => {
 });
 
 app.get('/next', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (currentVideoIndex < videos.length - 1) {
     currentVideoIndex++;
@@ -82,7 +82,7 @@ app.get('/next', (req, res) => {
 });
 
 app.get('/previous', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (currentVideoIndex > 0) {
     currentVideoIndex--;
@@ -94,5 +94,4 @@ app.get('/previous', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  console.log('process.env.FRONTEND_URL', process.env.FRONTEND_URL);
 });
