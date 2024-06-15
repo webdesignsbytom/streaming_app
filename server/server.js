@@ -28,10 +28,8 @@ let currentVideoIndex = 0;
 const getVideoPath = (index) => path.join(videoDirectory, videos[index]);
 
 app.get('/', (req, res) => {
-  <div>
-    HELLO WORLD
-  </div>
-})
+  res.send('Welcome to the Video Streaming Server. Use /video to stream a video.');
+});
 
 
 app.get('/video', (req, res) => {
