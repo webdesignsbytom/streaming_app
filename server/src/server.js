@@ -13,14 +13,14 @@ app.use(cors({
   origin: "*"
 }));
 
-const PORT = 3001;
+const PORT = process.env.PORT 
 
 // Get the directory name
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Get video files from directory
-const videoDirectory = path.join(__dirname, 'videos');
+const videoDirectory = path.join(__dirname, '..', 'videos');
 let videos = fs.readdirSync(videoDirectory).filter(file => file.endsWith('.mp4'));
 let currentVideoIndex = 0;
 
