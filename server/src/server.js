@@ -2,15 +2,25 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import fs from 'fs';
 import * as url from 'url';
+import session from 'express-session';
+import { join } from 'path';
+// Routes
+import videoRouter from './routes/videos.js';
 
 const app = express();
 app.disable('x-powered-by');
 
 // Add middleware
-app.use(cors({
-  origin: "*"
+app.use(cors({ origin: '*' }));
+app.use(express.json());
+
+// Configure sessions
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'efw8fw8fne2',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true in production with HTTPS
 }));
 
 const PORT = process.env.PORT || 3001;
@@ -19,77 +29,26 @@ const PORT = process.env.PORT || 3001;
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Get video files from directory
-const videoDirectory = path.join(__dirname, '..', 'videos');
-let videos = fs.readdirSync(videoDirectory).filter(file => file.endsWith('.mp4'));
-let currentVideoIndex = 0;
+// Routes
+app.use('/videos', videoRouter);
 
-// Helper function to get video path
-const getVideoPath = (index) => path.join(videoDirectory, videos[index]);
-
+// Server interface page
 app.get('/', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.send('Welcome to the Video Streaming Server. Use /video to stream a video.');
+  res.sendFile('index.html', {
+    root: join(__dirname, 'views'),
+  });
 });
 
-app.get('/video', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  
-  const videoPath = getVideoPath(currentVideoIndex);
-  if (!fs.existsSync(videoPath)) {
-    return res.status(404).send('Video not found');
-  }
-
-  const stat = fs.statSync(videoPath);
-  const fileSize = stat.size;
-  const range = req.headers.range;
-
-  if (range) {
-    const parts = range.replace(/bytes=/, "").split("-");
-    const start = parseInt(parts[0], 10);
-    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-    const chunksize = (end - start) + 1;
-    const file = fs.createReadStream(videoPath, { start, end });
-    const head = {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
-      'Content-Type': 'video/mp4',
-    };
-
-    res.writeHead(206, head);
-    file.pipe(res);
+// For all unknown requests 404 page returns
+app.all('*', (req, res) => {
+  res.status(404);
+  if (req.accepts('html')) {
+    res.sendFile(join(__dirname, 'views', '404.html'));
+  } else if (req.accepts('json')) {
+    res.json({ message: '404 Not Found' });
   } else {
-    const head = {
-      'Content-Length': fileSize,
-      'Content-Type': 'video/mp4',
-    };
-
-    res.writeHead(200, head);
-    fs.createReadStream(videoPath).pipe(res);
+    res.type('txt').send('404 Not Found');
   }
-});
-
-app.get('/next', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  if (currentVideoIndex < videos.length - 1) {
-    currentVideoIndex++;
-  } else {
-    currentVideoIndex = 0; // Loop back to the first video
-  }
-  res.redirect('/video');
-});
-
-app.get('/previous', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  if (currentVideoIndex > 0) {
-    currentVideoIndex--;
-  } else {
-    currentVideoIndex = videos.length - 1; // Loop back to the last video
-  }
-  res.redirect('/video');
 });
 
 app.listen(PORT, () => {
