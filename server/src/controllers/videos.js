@@ -12,13 +12,15 @@ const videoDirectory = path.join(__dirname, '..', '..', 'videos');
 const uploadDirectory = path.join(__dirname, '..', '..', 'uploads');
 const compressedDirectory = path.join(__dirname, '..', '..', 'compressed');
 
+const selectedDirectory = compressedDirectory;
+
 let videos = fs
-  .readdirSync(videoDirectory)
+  .readdirSync(selectedDirectory)
   .filter((file) => file.endsWith('.mp4'));
 let currentVideoIndex = 0;
 
 // Helper function to get video path
-const getVideoPath = (index) => path.join(videoDirectory, videos[index]);
+const getVideoPath = (index) => path.join(selectedDirectory, videos[index]);
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
@@ -33,14 +35,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('video');
 
 export const getMainVideo = async (req, res) => {
+  console.log('getMainVideo');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  // Using a session-based approach for user-specific video tracking
-  if (!req.session.currentVideoIndex) {
-    req.session.currentVideoIndex = 0;
-  }
-
-  const videoPath = getVideoPath(req.session.currentVideoIndex);
+  const videoPath = getVideoPath(currentVideoIndex);
   if (!fs.existsSync(videoPath)) {
     return res.status(404).send('Video not found');
   }
@@ -49,6 +47,9 @@ export const getMainVideo = async (req, res) => {
   const fileSize = stat.size;
   const range = req.headers.range;
 
+  console.log('fileSize: ', fileSize);
+  console.log('range', range)
+  
   if (range) {
     const parts = range.replace(/bytes=/, '').split('-');
     const start = parseInt(parts[0], 10);
@@ -76,35 +77,46 @@ export const getMainVideo = async (req, res) => {
 };
 
 export const getNextMainVideo = async (req, res) => {
-  if (req.session.currentVideoIndex < videos.length - 1) {
-    req.session.currentVideoIndex++;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  if (currentVideoIndex < videos.length - 1) {
+    currentVideoIndex++;
   } else {
-    req.session.currentVideoIndex = 0; // Loop back to the first video
+    currentVideoIndex = 0; // Loop back to the first video
   }
-  res.redirect('/video');
+  res.redirect('/videos/video');
 };
 
 export const getPreviousMainVideo = async (req, res) => {
-  if (req.session.currentVideoIndex > 0) {
-    req.session.currentVideoIndex--;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  if (currentVideoIndex > 0) {
+    currentVideoIndex--;
   } else {
-    req.session.currentVideoIndex = videos.length - 1; // Loop back to the last video
+    currentVideoIndex = videos.length - 1; // Loop back to the last video
   }
-  res.redirect('/video');
+  res.redirect('/videos/video');
 };
 
 export const uploadMainVideo = async (req, res) => {
   console.log('uploadMainVideo');
+
   upload(req, res, (err) => {
     if (err) {
       return res.status(500).json({ message: 'Error uploading video' });
     }
 
+    console.log('req.file', req.file);
+
     const filePath = req.file.path;
+    console.log('filePath', filePath);
+
     const outputPath = path.join(
       compressedDirectory,
       `${Date.now()}-compressed.mp4`
     );
+
+    console.log('outputPath', outputPath);
 
     // Use ffmpeg to compress the video
     ffmpeg(filePath)

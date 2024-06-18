@@ -1,14 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import axios from 'axios';
+// Api
 import client from '../api/client';
 
 function VideoPlayer() {
   const videoRef = useRef(null);
-  console.log('process.env.REACT_APP_API_URL', process.env.REACT_APP_API_URL);
 
-  const fetchVideo = async () => {
+  const fetchVideo = async (url) => {
     client
-      .getVideo(`/videos/video`)
+      .getVideo(url)
       .then((res) => {
         console.log('response', res.data);
         const videoUrl = URL.createObjectURL(res.data);
@@ -17,37 +16,14 @@ function VideoPlayer() {
       .catch((err) => {
         console.error('Unable to get video', err);
       });
-  };
+   };
 
   useEffect(() => {
-    fetchVideo();
+    fetchVideo('/videos/video');
   }, []);
 
-  const requestNextVideo = async () => {
-    client
-      .getVideo(`/videos/next-video`)
-      .then((res) => {
-        console.log('response', res.data);
-        const videoUrl = URL.createObjectURL(res.data);
-        videoRef.current.src = videoUrl;
-      })
-      .catch((err) => {
-        console.error('Unable to get video', err);
-      });
-  };
-
-  const requestPreviousVideo = async () => {
-    client
-      .getVideo(`/videos/previous-video`)
-      .then((res) => {
-        console.log('response', res.data);
-        const videoUrl = URL.createObjectURL(res.data);
-        videoRef.current.src = videoUrl;
-      })
-      .catch((err) => {
-        console.error('Unable to get video', err);
-      });
-  };
+  const requestNextVideo = () => fetchVideo('/videos/next-video');
+  const requestPreviousVideo = () => fetchVideo('/videos/previous-video');
 
   return (
     <div className='grid h-screen w-full overflow-hidden'>

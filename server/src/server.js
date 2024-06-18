@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import * as url from 'url';
-import session from 'express-session';
 import { join } from 'path';
 // Routes
 import videoRouter from './routes/videos.js';
@@ -15,15 +14,7 @@ app.disable('x-powered-by');
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-// Configure sessions
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'efw8fw8fne2',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set to true in production with HTTPS
-}));
-
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4001;
 
 // Get the directory name
 const __filename = url.fileURLToPath(import.meta.url);
