@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { getMainVideo, getNextMainVideo, getPreviousMainVideo, uploadMainVideo } from '../controllers/videos.js';
+import {
+  getMainVideo,
+  getNextMainVideo,
+  getPreviousMainVideo,
+  uploadMainVideo,
+} from '../controllers/videos.js';
 
 const router = Router();
 

@@ -1,23 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
+import client from '../api/client';
 
 function VideoPlayer() {
   const videoRef = useRef(null);
   console.log('process.env.REACT_APP_API_URL', process.env.REACT_APP_API_URL);
 
   const fetchVideo = async () => {
-    try {
-      const response = await axios.get(
-        `https://streaming-app-sigma-five.vercel.app/video`,
-        {
-          responseType: 'blob',
-        }
-      );
-      const videoUrl = URL.createObjectURL(response.data);
-      videoRef.current.src = videoUrl;
-    } catch (error) {
-      console.error('Error fetching video:', error);
-    }
+    client
+      .getVideo(`/videos/video`)
+      .then((res) => {
+        console.log('response', res.data);
+        const videoUrl = URL.createObjectURL(res.data);
+        videoRef.current.src = videoUrl;
+      })
+      .catch((err) => {
+        console.error('Unable to get video', err);
+      });
   };
 
   useEffect(() => {
@@ -25,21 +24,29 @@ function VideoPlayer() {
   }, []);
 
   const requestNextVideo = async () => {
-    try {
-      await axios.get(`https://streaming-app-sigma-five.vercel.app/next`);
-      fetchVideo();
-    } catch (error) {
-      console.error('Error requesting next video:', error);
-    }
+    client
+      .getVideo(`/videos/next-video`)
+      .then((res) => {
+        console.log('response', res.data);
+        const videoUrl = URL.createObjectURL(res.data);
+        videoRef.current.src = videoUrl;
+      })
+      .catch((err) => {
+        console.error('Unable to get video', err);
+      });
   };
 
   const requestPreviousVideo = async () => {
-    try {
-      await axios.get(`https://streaming-app-sigma-five.vercel.app/previous`);
-      fetchVideo();
-    } catch (error) {
-      console.error('Error requesting previous video:', error);
-    }
+    client
+      .getVideo(`/videos/previous-video`)
+      .then((res) => {
+        console.log('response', res.data);
+        const videoUrl = URL.createObjectURL(res.data);
+        videoRef.current.src = videoUrl;
+      })
+      .catch((err) => {
+        console.error('Unable to get video', err);
+      });
   };
 
   return (

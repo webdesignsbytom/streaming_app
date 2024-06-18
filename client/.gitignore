@@ -1,7 +1,8 @@
 env
 .env
 /.env
-
+env/
+client/.env
 # dependencies
 /node_modules
 /.pnp
