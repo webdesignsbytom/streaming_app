@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// Api
 import client from '../api/client';
 
 function VideoUpload() {
