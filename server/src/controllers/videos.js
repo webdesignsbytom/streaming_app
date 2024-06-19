@@ -42,6 +42,7 @@ export const getMainVideo = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   const videoPath = getVideoPath(currentVideoIndex);
+  console.log('video path: ', videoPath);
   if (!fs.existsSync(videoPath)) {
     return res.status(404).send('Video not found');
   }
