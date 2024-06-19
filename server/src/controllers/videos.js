@@ -34,6 +34,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('video');
 
+// Set the path to the ffmpeg binary
+// ffmpeg.setFfmpegPath(path.join('C:', 'ffmpeg', 'bin', 'ffmpeg.exe')); // Adjust the path as necessary
+
 export const getMainVideo = async (req, res) => {
   console.log('getMainVideo');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -48,8 +51,8 @@ export const getMainVideo = async (req, res) => {
   const range = req.headers.range;
 
   console.log('fileSize: ', fileSize);
-  console.log('range', range)
-  
+  console.log('range', range);
+
   if (range) {
     const parts = range.replace(/bytes=/, '').split('-');
     const start = parseInt(parts[0], 10);
@@ -120,6 +123,7 @@ export const uploadMainVideo = async (req, res) => {
 
     // Use ffmpeg to compress the video
     ffmpeg(filePath)
+      .noAudio()
       .output(outputPath)
       .videoCodec('libx264')
       .size('640x?')
@@ -133,7 +137,7 @@ export const uploadMainVideo = async (req, res) => {
           .filter((file) => file.endsWith('.mp4'));
         res.json({
           message: 'Video uploaded and compressed successfully',
-          path: outputPath,
+          url: outputPath,
         });
       })
       .on('error', (err) => {
