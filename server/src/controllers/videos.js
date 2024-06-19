@@ -8,7 +8,6 @@ import * as url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const videoDirectory = path.join(__dirname, '..', '..', 'videos');
 const uploadDirectory = path.join(__dirname, '..', '..', 'uploads');
 const compressedDirectory = path.join(__dirname, '..', '..', 'compressed');
 
