@@ -14,7 +14,7 @@ app.disable('x-powered-by');
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 3000;
 
 // Get the directory name
 const __filename = url.fileURLToPath(import.meta.url);
@@ -27,6 +27,12 @@ app.use('/videos', videoRouter);
 app.get('/', (req, res) => {
   res.sendFile('index.html', {
     root: join(__dirname, 'views'),
+  });
+});
+
+app.get('/test', (req, res) => {
+  return res.status(200).json({
+      message: 'look out radioactive man'
   });
 });
 
