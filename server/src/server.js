@@ -6,6 +6,7 @@ import * as url from 'url';
 import { join } from 'path';
 // Routes
 import videoRouter from './routes/videos.js';
+import adminRouter from './routes/admin.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -22,6 +23,7 @@ const __dirname = path.dirname(__filename);
 
 // Routes
 app.use('/videos', videoRouter);
+app.use('/admin', adminRouter);
 
 // Server interface page
 app.get('/', (req, res) => {

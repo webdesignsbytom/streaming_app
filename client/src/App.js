@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import VideoPlayerPage from './pages/video/VideoPlayerPage';
 import VideoUploadPage from './pages/video/VideoUploadPage';
 import HomePage from './pages/home/HomePage';
+import TestPage from './pages/test/TestPage';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Route path='/' index element={<HomePage />} />
       <Route path='/videos' element={<VideoPlayerPage />} />
       <Route path='/upload' element={<VideoUploadPage />} />
+      <Route path='/test' element={<TestPage />} />
     </Routes>
   );
 }

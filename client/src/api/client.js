@@ -1,6 +1,6 @@
 // EXAMPLE ONLY WRITE YOUR OWN EACH TIME
 import axios from 'axios';
-const host = process.env.REACT_APP_API_URL;
+const host = process.env.REACT_APP_API_URL || 'https://cat.myecoapp.org';
 const tokenKey = process.env.REACT_APP_USER_TOKEN;
 
 console.log('host', host);
